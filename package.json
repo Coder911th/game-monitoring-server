@@ -7,7 +7,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node server/index.js"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,10 @@
   },
   "homepage": "https://github.com/Coder911th/game-monitoring-server#readme",
   "dependencies": {
-    "express": "4.16.3",
-    "web-events-server": "^2.0.1"
+    "express": "^4.16.3",
+    "gamedig": "^1.0.45",
+    "ip-address": "^5.8.9",
+    "pg": "^7.4.1",
+    "web-events-server": "^2.1.0"
   }
 }
