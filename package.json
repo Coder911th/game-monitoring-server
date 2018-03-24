@@ -1,0 +1,26 @@
+{
+  "name": "game-monitoring-server",
+  "version": "1.0.0",
+  "description": "API server which passes data about some game servers",
+  "engines": {
+    "node": "9.9.0"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Coder911th/game-monitoring-server.git"
+  },
+  "author": "Lozhkin Dmitry",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Coder911th/game-monitoring-server/issues"
+  },
+  "homepage": "https://github.com/Coder911th/game-monitoring-server#readme",
+  "dependencies": {
+    "express": "4.16.3",
+    "web-events-server": "^2.0.1"
+  }
+}
