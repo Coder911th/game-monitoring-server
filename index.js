@@ -1,12 +1,7 @@
-import express from 'express'
-import http    from 'http'
-import events  from 'web-events-server'
+const
+  server = require('http').createServer(require('express'));
 
-let
-  app    = express(),
-  server = http.createServer(app);
-
-events(server, {
+require('web-events-server')(server, {
   connection(ws, req) {
     console.dir(req, { depth: 1 })
   },
