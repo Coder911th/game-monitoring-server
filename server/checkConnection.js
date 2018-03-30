@@ -1,3 +1,6 @@
+const
+    Gamedig = require('gamedig');
+
 // Проверяет активен ли указанный сервер
 function checkConnection(ip, port, game) {
   return Gamedig.query({

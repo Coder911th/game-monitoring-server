@@ -86,14 +86,14 @@ void async function() {
 
     // Возвращает массив названий поддерживаемых серверов и их id
     getGamesList() {
-      return ['recieveGameList', gamesList];
+      return ['recieveGamesList', gamesList];
     },
 
     // Возвращает все сервера игры по её полному имени
     getGameData(fullGameName) {
       let index = gamesList.indexOf(fullGameName);
       return (index > -1)
-        ? ['recieveGameData', games[index].servers]
+        ? ['recieveGameData', games[gamesList[index]].servers]
         : ['error', `Мониторинг серверов игры "${fullGameName}" не поддерживается сервером!`];
     },
 
@@ -160,60 +160,47 @@ async function addServerToDatabase(ip, port, game) {
     ];
   }
 
-  // Проверка на соответствие указанного типа игры
-  switch (true) {
-    case game === 'Counter-Strike: Condition Zero'
-      && info.raw.folder !== 'czero':
+  // Проверки на соответствие указанного типа игры
+  let checks = [
+    {
+      gameName: 'Counter-Strike: Condition Zero',
+      isWrong: game === 'Counter-Strike: Condition Zero' && info.raw.folder !== 'czero'
+    },
+    {
+      gameName: 'Counter-Strike: Global Offensive',
+      isWrong: game === 'Counter-Strike: Global Offensive' && info.raw.folder !== 'csgo'
+    },
+    {
+      gameName: 'Half-Life 1 Deathmatch',
+      isWrong: game === 'Half-Life 1 Deathmatch' && info.raw.folder !== 'valve'
+    },
+    {
+      gameName: 'Garry`s Mod',
+      isWrong: game === 'Garry`s Mod' && info.raw.folder !== 'garrysmod'
+    },
+    {
+      gameName: 'Counter-Strike 1.6',
+      isWrong: game === 'Counter-Strike 1.6' &&
+        (info.raw.folder !== 'cstrike' ||
+        info.raw.protocol != 47 &&
+        info.raw.protocol != 48)
+    },
+    {
+      gameName: 'Counter-Strike: Source',
+      isWrong: game === 'Counter-Strike: Source' &&
+        (info.raw.folder !== 'cstrike' ||
+        info.raw.protocol == 47 ||
+        info.raw.protocol == 48)
+    }
+  ]
 
+  for (let check of checks)
+    if (check.isWrong)
       return ['error',
         'Данный сервер не является игровым сервером ' +
-        'игры Counter-Strike: Condition Zero!'
+        'игры ' + check.gameName + '!'
       ];
 
-    case game === 'Counter-Strike: Global Offensive'
-      && info.raw.folder !== 'csgo':
-
-      return ['error',
-        'Данный сервер не является игровым сервером ' +
-        'игры Counter-Strike: Global Offensive!'
-      ];
-      
-    case game === 'Half-Life 1 Deathmatch'
-      && info.raw.folder !== 'valve':
-
-      return ['error',
-        'Данный сервер не является игровым сервером ' +
-        'игры Half-Life 1 Deathmatch!'
-      ];
-
-    case game === 'Garry’s Mod'
-      && info.raw.folder !== 'garrysmod':
-
-      return ['error',
-        'Данный сервер не является игровым сервером ' +
-        'игры Garry’s Mod!'
-      ];
-
-    case game === 'Counter-Strike 1.6'
-      && (info.raw.folder !== 'cstrike'
-      || info.raw.protocol != 47
-      && info.raw.protocol != 48):
-
-      return ['error',
-        'Данный сервер не является игровым сервером ' +
-        'игры Counter-Strike 1.6!'
-      ];
-    case game === 'Counter-Strike: Source'
-      && (info.raw.folder !== 'cstrike'
-      || info.raw.protocol == 47
-      || info.raw.protocol == 48):
-      
-      return ['error',
-        'Данный сервер не является игровым сервером ' +
-        'игры Counter-Strike: Source!'
-      ];
-  }
-  
   // Добавляем сервер в базу
   await db.query(QUERIES.addNewServer, [ip, port, game]);
   console.log(`В базу данных добавлен новый сервер: ${ip}:${port} (${game})`);
@@ -225,6 +212,6 @@ async function addServerToDatabase(ip, port, game) {
 
     games[game].servers.push(server);
 
-    await updateServerInfo(games[game], server, players[game], `${ip}:${port}`);
+    updateServerInfo(games[game], server, players[game], `${ip}:${port}`);
     return ['serverAdded', 'Сервер успешно добавлен в базу данных!'];
 }

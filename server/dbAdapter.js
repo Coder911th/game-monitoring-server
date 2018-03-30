@@ -9,7 +9,7 @@ class dbAdapter extends require('pg').Client {
   }
 
   async isEmptryQueryResult() {
-    return (await this.query.apply(this, arguments).length) == 0
+    return (await this.query.apply(this, arguments)).length == 0;
   }
 
   async forEach(sql, args, callback) {
