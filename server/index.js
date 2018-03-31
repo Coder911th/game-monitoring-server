@@ -82,7 +82,7 @@ void async function() {
   
 
   /***** API *****/
-  require('web-events-server')(server, {
+  let activeUsers = require('web-events-server')(server, {
 
     // Возвращает массив названий поддерживаемых серверов и их id
     getGamesList() {
@@ -136,6 +136,14 @@ void async function() {
       return await addServerToDatabase(ip, port, fullGameName)
     }
   });
+
+  // Запускаем бесконечный цикл ping-pong
+  setTimeout(function pingSender() {
+    activeUsers.forEach(function(user) {
+      user.emit('ping');
+    });
+    setTimeout(pingSender, 40000);
+  }, 40000);
 
   server.listen(process.env.PORT || 80);
 }();
