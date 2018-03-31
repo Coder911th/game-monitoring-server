@@ -58,3 +58,4 @@ typings/
 .env
 
 db.bat
+start.bat

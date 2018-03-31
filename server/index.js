@@ -8,13 +8,13 @@ const
 
   // Конфигурация подключения к базе данных
   databaseConfig = {
-    connectionString: process.env.DATABASE_URL || console.log('>>>>> Настройте конфигурацию базы данных! <<<<<'),
+    connectionString: process.env.DATABASE_URL || (console.log('>>>>> Настройте конфигурацию базы данных! <<<<<'), process.exit(0)),
     ssl: true
   },
   db = new (require('./dbAdapter.js'))(databaseConfig),
   QUERIES = require('./QUERIES.js');
 
-
+  
 
 let
   /*
