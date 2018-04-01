@@ -162,7 +162,7 @@ async function addServerToDatabase(ip, port, game) {
   let info;
   try {
     info = await checkConnection(ip, port, games[game].type);
-  } catch(e) {console.log(e);
+  } catch(e) {
     return ['error',
       'Не удалось добавить сервер в базу данных! ' +
       'Указанный сервер не отвечает на запрос!'
