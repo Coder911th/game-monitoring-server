@@ -113,9 +113,9 @@ void async function() {
       // Проверка корректности номера порта
       if (!/^\d+$/.test(port) || +port > 65535)
         return ['error', 'Неверно указан номер порта!'];
-
+      
       // Проверка типа игры
-      if (~gamesList.indexOf(fullGameName))
+      if (gamesList.indexOf(fullGameName) < 0)
         return ['error', `Мониторинг серверов игры "${fullGameName}" не поддерживается сервером!`];
 
       // Проверка адреса
@@ -156,18 +156,19 @@ void async function() {
   game - полное название игры
 */
 async function addServerToDatabase(ip, port, game) {
-  if (await db.isEmptryQueryResult(isThereServerInDatabase, [ip, port, game]))
+  if (!(await db.isEmptryQueryResult(QUERIES.isThereServerInDatabase, [ip, port, game])))
     return ['error', 'Данный сервер уже есть в базе данных!'];
 
+  let info;
   try {
-    let info = await checkConnection(ip, port, cache.games[game].type);
-  } catch(e) {
+    info = await checkConnection(ip, port, games[game].type);
+  } catch(e) {console.log(e);
     return ['error',
       'Не удалось добавить сервер в базу данных! ' +
       'Указанный сервер не отвечает на запрос!'
     ];
   }
-
+  
   // Проверки на соответствие указанного типа игры
   let checks = [
     {
@@ -213,13 +214,13 @@ async function addServerToDatabase(ip, port, game) {
   await db.query(QUERIES.addNewServer, [ip, port, game]);
   console.log(`В базу данных добавлен новый сервер: ${ip}:${port} (${game})`);
 
-    let server = {
-        ip, port,
-        online: false
-    };
+  let server = {
+      ip, port,
+      online: false
+  };
 
-    games[game].servers.push(server);
+  games[game].servers.push(server);
 
-    updateServerInfo(games[game], server, players[game], `${ip}:${port}`);
-    return ['serverAdded', 'Сервер успешно добавлен в базу данных!'];
+  updateServerInfo(games[game], server, players[game], `${ip}:${port}`);
+  return ['serverAdded', 'Сервер успешно добавлен в базу данных!'];
 }
