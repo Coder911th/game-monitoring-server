@@ -134,6 +134,16 @@ void async function() {
       address = address.correctForm();
 
       return await addServerToDatabase(ip, port, fullGameName)
+    },
+
+    // Возвращает информацию о конкретном сервере
+    getServerInfo(ip, port, fullGameName) {
+      if (gamesList.indexOf(fullGameName) < 0)
+        return ['error404', `Мониторинг серверов игры "${fullGameName}" не поддерживается сервером!`];
+      let server = games[fullGameName].servers.find(server => server.ip == ip && server.port == port)
+      if (!server)
+        return ['error404', 'Запрашиваемый сервер не найден в базе данных!'];
+      return ['recieveServerInfo', server, players[fullGameName][`${ip}:${port}`]];
     }
   });
 
