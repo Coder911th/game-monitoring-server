@@ -70,10 +70,9 @@ void async function() {
         port: item.port,
         online: false
       };
-
     game.servers.push(server);
     updateServerInfo(game, server, players[gameName],
-      `${item.ip}:${item.port}`);
+      `${item.ip}:${item.port}`, gameName);
   });
   console.log('>>>>>> Все данные получены!');
 
@@ -82,7 +81,7 @@ void async function() {
   
 
   /***** API *****/
-  let activeUsers = require('web-events-server')(server, {
+  global.activeUsers = require('web-events-server')(server, {
 
     // Возвращает массив названий поддерживаемых серверов и их id
     getGamesList() {
@@ -143,13 +142,22 @@ void async function() {
       let server = games[fullGameName].servers.find(server => server.ip == ip && server.port == port)
       if (!server)
         return ['error404', 'Запрашиваемый сервер не найден в базе данных!'];
+      this.watching = {
+        fullGameName,
+        socket: `${ip}:${port}`
+      };
       return ['recieveServerInfo', server, players[fullGameName][`${ip}:${port}`]];
+    },
+
+    // Отписка от наблюдения за сервером
+    unsubscribeFromWatching() {
+      this.watching = null;
     }
   });
 
   // Запускаем бесконечный цикл ping-pong
   setTimeout(function pingSender() {
-    activeUsers.forEach(function(user) {
+    global.activeUsers.forEach(function(user) {
       user.emit('ping');
     });
     setTimeout(pingSender, 40000);
@@ -231,6 +239,6 @@ async function addServerToDatabase(ip, port, game) {
 
   games[game].servers.push(server);
 
-  updateServerInfo(games[game], server, players[game], `${ip}:${port}`);
+  updateServerInfo(games[game], server, players[game], `${ip}:${port}`, game);
   return ['serverAdded', 'Сервер успешно добавлен в базу данных!'];
 }
