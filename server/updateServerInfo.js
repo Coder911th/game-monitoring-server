@@ -36,6 +36,7 @@ async function updateServerInfo(game, server, players, socket, fullGameName) {
     server.players = data.players.length;
     players[socket] = data.players;
   } catch(error) {
+    console.log(`Не удалось обновить информацию о сервере (${server.ip}:${server.port})\n`, error);
     [
       server.online,
       server.lastUpdate,

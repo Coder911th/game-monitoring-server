@@ -37,10 +37,8 @@ let
   players = {};
 
 
-
-
 void async function() {
-  console.log('>>>>>> Инициализация сервера. Получение данных из базы...');
+  console.log('Инициализация сервера. Получение данных из базы...');
   /*
     Запрашиваем список всех наблюдаемых игр
   */ 
@@ -57,6 +55,7 @@ void async function() {
       {}
     ]
   );
+  console.log('Список поддерживаемых игр загружен!');
 
   /*
     Запускаем цикл наблюдения за каждый сервером из базы данных
@@ -74,7 +73,8 @@ void async function() {
     updateServerInfo(game, server, players[gameName],
       `${item.ip}:${item.port}`, gameName);
   });
-  console.log('>>>>>> Все данные получены!');
+  console.log('Список наблюдаемых серверов загружен!');
+  console.log('Все данные получены!');
 
 
 
