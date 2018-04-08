@@ -27,11 +27,13 @@ async function updateServerInfo(game, server, players, socket, fullGameName) {
       bots: server.bots,
       online: server.online,
       lastUpdate: server.lastUpdate,
-      lastOnline: server.lastOnline
+      lastOnline: server.lastOnline,
+      shortGameName: server.shortGameName
     } = Object.assign(data, {
       online: true,
       lastUpdate: now,
-      lastOnline: now
+      lastOnline: now,
+      shortGameName: game.type
     }));
     server.players = data.players.length;
     players[socket] = data.players;
@@ -45,7 +47,8 @@ async function updateServerInfo(game, server, players, socket, fullGameName) {
       server.password,
       server.maxPlayers,
       server.bots,
-      server.players
+      server.players,
+      server.shortGameName
     ] = [false, Date.now()];
     players[socket] = undefined;
   }
